@@ -62,8 +62,8 @@ export default function Signup() {
         toast.error('Preencha todos os campos')
         return false
       }
-      if (password.length < 6) {
-        toast.error('Senha deve ter pelo menos 6 caracteres')
+      if (password.length < 8) {
+        toast.error('Senha deve ter pelo menos 8 caracteres')
         return false
       }
       if (password !== confirmPassword) {
@@ -224,7 +224,7 @@ export default function Signup() {
                 </Field>
                 <Field label="Senha" icon={<Lock className="w-4 h-4" />}>
                   <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                    placeholder="Mínimo 6 caracteres" className="field-input" />
+                    placeholder="Mínimo 8 caracteres" className="field-input" />
                 </Field>
                 <Field label="Confirmar senha" icon={<Lock className="w-4 h-4" />}>
                   <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
