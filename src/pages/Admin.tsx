@@ -50,8 +50,8 @@ export default function Admin() {
     try {
       const [profilesRes, matchesRes, swipesRes] = await Promise.all([
         supabase.from('profiles').select('*').order('created_at', { ascending: false }),
-        supabase.from('matches').select('id', { count: 'exact' }),
-        supabase.from('swipes').select('id', { count: 'exact' }),
+        supabase.from('matches').select('*', { count: 'exact', head: true }),
+        supabase.from('swipes').select('*', { count: 'exact', head: true }),
       ])
 
       const allProfiles = profilesRes.data ?? []
