@@ -22,6 +22,8 @@ export default function Profile() {
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [saving, setSaving] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [isActive, setIsActive] = useState(profile?.is_active ?? true)
+  const [togglingActive, setTogglingActive] = useState(false)
 
   function togglePosition(pos: Position) {
     if (pos === 'ANY') { setPositions(['ANY']); return }
@@ -89,6 +91,26 @@ export default function Profile() {
       toast.error(err.message || 'Erro ao salvar')
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handleToggleActive() {
+    if (!profile || !user) return
+    setTogglingActive(true)
+    try {
+      const next = !isActive
+      const { error } = await supabase
+        .from('profiles')
+        .update({ is_active: next })
+        .eq('user_id', user.id)
+      if (error) throw error
+      setIsActive(next)
+      await refreshProfile()
+      toast.success(next ? 'Perfil ativado — você voltou a aparecer! 🟢' : 'Perfil pausado — você sumiu do radar 🔴')
+    } catch (err: any) {
+      toast.error(err.message || 'Erro ao atualizar perfil')
+    } finally {
+      setTogglingActive(false)
     }
   }
 
@@ -279,6 +301,21 @@ export default function Profile() {
       >
         <Save className="w-5 h-5" />
         {saving ? 'Salvando...' : 'Salvar alterações'}
+      </motion.button>
+
+      {/* Toggle active */}
+      <motion.button
+        onClick={handleToggleActive}
+        disabled={togglingActive}
+        className="w-full py-3 rounded-2xl font-semibold text-sm mb-3 flex items-center justify-center gap-2 disabled:opacity-60"
+        style={{
+          background: isActive ? 'rgba(255,20,147,0.1)' : 'rgba(57,255,20,0.1)',
+          border: `1px solid ${isActive ? 'rgba(255,20,147,0.3)' : 'rgba(57,255,20,0.3)'}`,
+          color: isActive ? '#FF1493' : '#39FF14',
+        }}
+        whileTap={{ scale: 0.97 }}
+      >
+        {togglingActive ? '⏳ Atualizando...' : isActive ? '🔴 Pausar meu perfil' : '🟢 Ativar meu perfil'}
       </motion.button>
 
       {/* Logout */}
