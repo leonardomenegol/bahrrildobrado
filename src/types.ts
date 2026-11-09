@@ -28,24 +28,23 @@ export function getPositionGroups(positions: Position[]): string[] {
   const hasPrimeira = positions.some(p => PRIMEIRAS_FALAS.includes(p))
   const hasSegunda  = positions.some(p => SEGUNDAS_FALAS.includes(p))
 
-  const groups: string[] = []
-  if (hasPonta && !hasMeio)     groups.push('Pontas')
-  if (hasMeio  && !hasPonta)    groups.push('Meios')
-  if (hasPonta && hasMeio)      groups.push('Pontas e Meios')
-  if (hasPrimeira && !hasSegunda && groups.length === 0) groups.push('Primeiras falas')
-  if (hasSegunda && !hasPrimeira && groups.length === 0) groups.push('Segundas falas')
+  // Dimensão 1: Ponta/Meio
+  let papel = ''
+  if (hasPonta && hasMeio)   papel = 'Pontas e Meios'
+  else if (hasPonta)         papel = 'Pontas'
+  else if (hasMeio)          papel = 'Meios'
 
-  // Add fala qualifier when only one fala dimension is present
-  if (hasPrimeira && !hasSegunda && (hasPonta || hasMeio)) {
-    const last = groups[groups.length - 1]
-    groups[groups.length - 1] = `${last} · Primeiras`
-  }
-  if (hasSegunda && !hasPrimeira && (hasPonta || hasMeio)) {
-    const last = groups[groups.length - 1]
-    groups[groups.length - 1] = `${last} · Segundas`
-  }
+  // Dimensão 2: Primeira/Segunda fala
+  let fala = ''
+  if (hasPrimeira && hasSegunda) fala = 'Primeiras e Segundas'
+  else if (hasPrimeira)          fala = 'Primeiras'
+  else if (hasSegunda)           fala = 'Segundas'
 
-  return groups.length > 0 ? groups : ['Variadas']
+  // Combina as duas dimensões quando ambas são informativas
+  if (papel && fala) return [`${papel} · ${fala}`]
+  if (papel)         return [papel]
+  if (fala)          return [fala]
+  return ['Variadas']
 }
 
 export const POSITION_LABELS: Record<Position, string> = {
