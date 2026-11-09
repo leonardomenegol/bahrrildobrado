@@ -11,13 +11,42 @@ export type Position =
   | 'ANY'  // Tanto faz
 
 // Papel na bancada: Ponta (abre o caso) vs Meio (fecha o caso)
-// A dupla precisa ter UM Ponta + UM Meio
 export const PONTA_POSITIONS: Position[] = ['PM', 'LO', 'GW', 'OW']
-export const MEIO_POSITIONS: Position[]  = ['MG', 'MO', 'DPM', 'DLO']
+export const MEIO_POSITIONS:  Position[] = ['MG', 'MO', 'DPM', 'DLO']
 
-// Fala: Primeiras (1ª bancada) vs Segundas (2ª bancada) — usado só para exibição
+// Fala: Primeiras (1ª bancada) vs Segundas (2ª bancada)
 export const PRIMEIRAS_FALAS: Position[] = ['PM', 'LO', 'MG', 'MO']
-export const SEGUNDAS_FALAS: Position[]  = ['DPM', 'DLO', 'GW', 'OW']
+export const SEGUNDAS_FALAS:  Position[] = ['DPM', 'DLO', 'GW', 'OW']
+
+// Derive display labels from selected positions
+export function getPositionGroups(positions: Position[]): string[] {
+  if (!positions || positions.length === 0) return []
+  if (positions.includes('ANY')) return ['Tanto faz']
+
+  const hasPonta    = positions.some(p => PONTA_POSITIONS.includes(p))
+  const hasMeio     = positions.some(p => MEIO_POSITIONS.includes(p))
+  const hasPrimeira = positions.some(p => PRIMEIRAS_FALAS.includes(p))
+  const hasSegunda  = positions.some(p => SEGUNDAS_FALAS.includes(p))
+
+  const groups: string[] = []
+  if (hasPonta && !hasMeio)     groups.push('Pontas')
+  if (hasMeio  && !hasPonta)    groups.push('Meios')
+  if (hasPonta && hasMeio)      groups.push('Pontas e Meios')
+  if (hasPrimeira && !hasSegunda && groups.length === 0) groups.push('Primeiras falas')
+  if (hasSegunda && !hasPrimeira && groups.length === 0) groups.push('Segundas falas')
+
+  // Add fala qualifier when only one fala dimension is present
+  if (hasPrimeira && !hasSegunda && (hasPonta || hasMeio)) {
+    const last = groups[groups.length - 1]
+    groups[groups.length - 1] = `${last} · Primeiras`
+  }
+  if (hasSegunda && !hasPrimeira && (hasPonta || hasMeio)) {
+    const last = groups[groups.length - 1]
+    groups[groups.length - 1] = `${last} · Segundas`
+  }
+
+  return groups.length > 0 ? groups : ['Variadas']
+}
 
 export const POSITION_LABELS: Record<Position, string> = {
   PM:  'Primeiro Ministro (PM)',

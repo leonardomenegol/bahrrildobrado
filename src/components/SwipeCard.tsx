@@ -1,7 +1,7 @@
 import { useRef, type ReactNode } from 'react'
 import { motion, useMotionValue, useTransform, useAnimation } from 'framer-motion'
 import type { Profile } from '../types'
-import { PONTA_POSITIONS, MEIO_POSITIONS } from '../types'
+import { getPositionGroups } from '../types'
 import { User } from 'lucide-react'
 
 interface SwipeCardProps {
@@ -106,33 +106,37 @@ export default function SwipeCard({ profile, onSwipe, isTop }: SwipeCardProps) {
 
           {/* Positions */}
           <div className="flex flex-wrap gap-2">
-            {profile.positions.includes('ANY') ? (
+            {getPositionGroups(profile.positions).map(group => (
               <span
+                key={group}
                 className="px-3 py-1 rounded-full text-xs font-bold"
-                style={{ background: 'rgba(191,0,255,0.2)', border: '1px solid #BF00FF', color: '#BF00FF' }}
+                style={{
+                  background: group === 'Tanto faz'
+                    ? 'rgba(191,0,255,0.2)'
+                    : group.includes('Ponta')
+                    ? 'rgba(255,107,53,0.2)'
+                    : group.includes('Meio')
+                    ? 'rgba(0,191,255,0.2)'
+                    : group.includes('Primeiras')
+                    ? 'rgba(255,215,0,0.2)'
+                    : 'rgba(57,255,20,0.2)',
+                  border: `1px solid ${
+                    group === 'Tanto faz' ? '#BF00FF'
+                    : group.includes('Ponta') ? '#FF6B35'
+                    : group.includes('Meio') ? '#00BFFF'
+                    : group.includes('Primeiras') ? '#FFD700'
+                    : '#39FF14'
+                  }`,
+                  color: group === 'Tanto faz' ? '#BF00FF'
+                    : group.includes('Ponta') ? '#FF6B35'
+                    : group.includes('Meio') ? '#00BFFF'
+                    : group.includes('Primeiras') ? '#FFD700'
+                    : '#39FF14',
+                }}
               >
-                ✨ Tanto faz
+                {group}
               </span>
-            ) : (
-              <>
-                {profile.positions.some(p => PONTA_POSITIONS.includes(p as any)) && (
-                  <span
-                    className="px-3 py-1 rounded-full text-xs font-bold"
-                    style={{ background: 'rgba(255,107,53,0.2)', border: '1px solid #FF6B35', color: '#FF6B35' }}
-                  >
-                    🎤 Pontas
-                  </span>
-                )}
-                {profile.positions.some(p => MEIO_POSITIONS.includes(p as any)) && (
-                  <span
-                    className="px-3 py-1 rounded-full text-xs font-bold"
-                    style={{ background: 'rgba(0,191,255,0.2)', border: '1px solid #00BFFF', color: '#00BFFF' }}
-                  >
-                    🎯 Meios
-                  </span>
-                )}
-              </>
-            )}
+            ))}
           </div>
 
           {/* Bio */}

@@ -73,11 +73,8 @@ export async function getDiscoverProfiles(userId: string): Promise<Profile[]> {
 
   if (!candidates) return []
 
-  // Filter by position and society compatibility
-  return candidates.filter(p =>
-    areCompatible(myProfile.positions, p.positions) &&
-    areSocietiesCompatible(myProfile.society, p.society)
-  )
+  // Filter only by society — position compatibility is not enforced
+  return candidates.filter(p => areSocietiesCompatible(myProfile.society, p.society))
 }
 
 export async function recordSwipe(
