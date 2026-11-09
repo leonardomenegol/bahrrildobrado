@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, ArrowRight, User, Mail, Lock, Phone, BookOpen, Camera } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import { PONTA_POSITIONS, MEIO_POSITIONS, POSITION_LABELS, SOCIETIES, type Position } from '../types'
+import { PONTA_POSITIONS, MEIO_POSITIONS, POSITION_LABELS, SOCIETIES, type Position, type DebateLevel } from '../types'
 import toast from 'react-hot-toast'
 
 const STEPS = ['conta', 'perfil', 'posicoes', 'foto'] as const
@@ -25,6 +25,7 @@ export default function Signup() {
   const [society, setSociety] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
   const [bio, setBio] = useState('')
+  const [level, setLevel] = useState<DebateLevel>('Open')
 
   // Positions
   const [positions, setPositions] = useState<Position[]>([])
@@ -135,6 +136,7 @@ export default function Signup() {
         photo_url: photoUrl,
         bio: bio || null,
         positions,
+        level,
         is_active: true,
       })
       if (profileError) throw profileError
@@ -272,6 +274,36 @@ export default function Signup() {
                   <input type="tel" value={whatsapp} onChange={e => setWhatsapp(e.target.value)}
                     placeholder="11987654321" className="field-input" />
                 </Field>
+
+                <div>
+                  <label className="block text-sm font-semibold text-white/70 mb-2">Categoria *</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {(['Open', 'Novice'] as DebateLevel[]).map(lvl => (
+                      <motion.button
+                        key={lvl}
+                        type="button"
+                        onClick={() => setLevel(lvl)}
+                        className="py-3 rounded-xl font-bold text-sm transition-all"
+                        style={{
+                          background: level === lvl
+                            ? lvl === 'Open'
+                              ? 'rgba(255,215,0,0.15)'
+                              : 'rgba(57,255,20,0.15)'
+                            : 'rgba(255,255,255,0.06)',
+                          border: `2px solid ${level === lvl
+                            ? lvl === 'Open' ? '#FFD700' : '#39FF14'
+                            : 'rgba(255,255,255,0.15)'}`,
+                          color: level === lvl
+                            ? lvl === 'Open' ? '#FFD700' : '#39FF14'
+                            : 'rgba(255,255,255,0.5)',
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {lvl === 'Open' ? '🏆 Open' : '🌱 Novice'}
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
                 <div>
                   <label className="block text-sm font-semibold text-white/70 mb-2">Apresentação (opcional)</label>
                   <textarea

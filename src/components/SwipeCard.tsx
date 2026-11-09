@@ -101,7 +101,21 @@ export default function SwipeCard({ profile, onSwipe, isTop }: SwipeCardProps) {
             >
               {profile.display_name}
             </h2>
-            <p className="text-white/50 text-sm">{profile.society}</p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <p className="text-white/50 text-sm">{profile.society}</p>
+              {profile.level && (
+                <span
+                  className="px-2 py-0.5 rounded-full text-xs font-bold"
+                  style={{
+                    background: profile.level === 'Open' ? 'rgba(255,215,0,0.15)' : 'rgba(57,255,20,0.15)',
+                    border: `1px solid ${profile.level === 'Open' ? '#FFD700' : '#39FF14'}`,
+                    color: profile.level === 'Open' ? '#FFD700' : '#39FF14',
+                  }}
+                >
+                  {profile.level === 'Open' ? '🏆 Open' : '🌱 Novice'}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Positions */}

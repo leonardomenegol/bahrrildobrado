@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   photo_url     TEXT,
   bio           TEXT,
   positions     TEXT[] NOT NULL DEFAULT '{}',
+  level         TEXT NOT NULL DEFAULT 'Open' CHECK (level IN ('Open', 'Novice')),
   is_active     BOOLEAN NOT NULL DEFAULT TRUE,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Camera, User, LogOut, Trash2, Save } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
-import { PONTA_POSITIONS, MEIO_POSITIONS, POSITION_LABELS, SOCIETIES, type Position } from '../types'
+import { PONTA_POSITIONS, MEIO_POSITIONS, POSITION_LABELS, SOCIETIES, type Position, type DebateLevel } from '../types'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
@@ -17,6 +17,7 @@ export default function Profile() {
   const [whatsapp, setWhatsapp] = useState(profile?.whatsapp ?? '')
   const [bio, setBio] = useState(profile?.bio ?? '')
   const [positions, setPositions] = useState<Position[]>(profile?.positions ?? [])
+  const [level, setLevel] = useState<DebateLevel>((profile?.level as DebateLevel) ?? 'Open')
   const [photoPreview, setPhotoPreview] = useState<string | null>(profile?.photo_url ?? null)
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [saving, setSaving] = useState(false)
@@ -65,6 +66,7 @@ export default function Profile() {
           whatsapp: whatsapp.replace(/\D/g, ''),
           bio: bio || null,
           positions,
+          level,
           photo_url: photoUrl,
           updated_at: new Date().toISOString(),
         })
@@ -175,6 +177,33 @@ export default function Profile() {
             placeholder="11987654321"
           />
         </FormField>
+        <div>
+          <label className="block text-xs font-semibold text-white/60 mb-1.5">Categoria *</label>
+          <div className="grid grid-cols-2 gap-3">
+            {(['Open', 'Novice'] as DebateLevel[]).map(lvl => (
+              <motion.button
+                key={lvl}
+                type="button"
+                onClick={() => setLevel(lvl)}
+                className="py-2.5 rounded-xl font-bold text-sm transition-all"
+                style={{
+                  background: level === lvl
+                    ? lvl === 'Open' ? 'rgba(255,215,0,0.15)' : 'rgba(57,255,20,0.15)'
+                    : 'rgba(255,255,255,0.06)',
+                  border: `2px solid ${level === lvl
+                    ? lvl === 'Open' ? '#FFD700' : '#39FF14'
+                    : 'rgba(255,255,255,0.15)'}`,
+                  color: level === lvl
+                    ? lvl === 'Open' ? '#FFD700' : '#39FF14'
+                    : 'rgba(255,255,255,0.5)',
+                }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {lvl === 'Open' ? '🏆 Open' : '🌱 Novice'}
+              </motion.button>
+            ))}
+          </div>
+        </div>
         <FormField label="Apresentação">
           <textarea
             value={bio}

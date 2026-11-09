@@ -71,6 +71,8 @@ export const POSITION_SHORT: Record<Position, string> = {
   ANY: 'Qualquer',
 }
 
+export type DebateLevel = 'Open' | 'Novice'
+
 export interface Profile {
   id: string
   user_id: string
@@ -81,6 +83,7 @@ export interface Profile {
   photo_url: string | null
   bio: string | null
   positions: Position[]
+  level: DebateLevel
   is_active: boolean
   created_at: string
   updated_at: string
