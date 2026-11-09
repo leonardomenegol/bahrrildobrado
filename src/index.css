@@ -1,0 +1,254 @@
+/* Fix select dropdowns */
+select.field-input,
+select.profile-input,
+.field-select,
+.profile-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: rgba(255,255,255,0.08);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.5)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-left: 44px !important;
+  padding-right: 36px !important;
+  cursor: pointer;
+  color: white;
+}
+
+select.field-select option,
+select.profile-select option,
+select option {
+  background-color: #1a1a3e;
+  color: white;
+}
+
+select.field-input:focus,
+select.profile-input:focus {
+  border-color: #FF1493;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255,20,147,0.2);
+}
+
+@import "tailwindcss";
+
+@theme {
+  --color-pink-hot: #FF1493;
+  --color-orange-vibrant: #FF6B35;
+  --color-yellow-pop: #FFD700;
+  --color-blue-electric: #00BFFF;
+  --color-green-lime: #39FF14;
+  --color-purple-y2k: #BF00FF;
+  --color-pink-soft: #FFB3C6;
+  --color-bg-dark: #0D0D1A;
+
+  --font-display: "Fredoka One", "Nunito", system-ui, sans-serif;
+  --font-body: "Nunito", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--color-bg-dark);
+  color: white;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* Scrollbar customization */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #1a1a2e;
+}
+::-webkit-scrollbar-thumb {
+  background: #FF1493;
+  border-radius: 3px;
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, #FF1493, #FF6B35, #FFD700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-cool {
+  background: linear-gradient(135deg, #00BFFF, #BF00FF, #FF1493);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card swipe animations */
+@keyframes swipe-right {
+  to {
+    transform: translateX(150%) rotate(30deg);
+    opacity: 0;
+  }
+}
+
+@keyframes swipe-left {
+  to {
+    transform: translateX(-150%) rotate(-30deg);
+    opacity: 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(-3deg); }
+  50% { transform: translateY(-10px) rotate(3deg); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+@keyframes match-pop {
+  0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+  60% { transform: scale(1.1) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes heart-beat {
+  0%, 100% { transform: scale(1); }
+  30% { transform: scale(1.3); }
+  60% { transform: scale(0.9); }
+}
+
+@keyframes rainbow-border {
+  0% { border-color: #FF1493; }
+  25% { border-color: #FF6B35; }
+  50% { border-color: #FFD700; }
+  75% { border-color: #00BFFF; }
+  100% { border-color: #FF1493; }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+.animate-match-pop {
+  animation: match-pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-heart-beat {
+  animation: heart-beat 0.6s ease-in-out;
+}
+
+.animate-rainbow-border {
+  animation: rainbow-border 2s linear infinite;
+}
+
+/* Sticker decorations */
+.sticker {
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Y2K bubble button */
+.btn-y2k {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.btn-y2k::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.4s ease;
+}
+
+.btn-y2k:hover::before {
+  left: 100%;
+}
+
+/* Glitter effect */
+@keyframes glitter {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* Card stack effect */
+.card-stack > *:nth-child(2) {
+  transform: translateY(8px) scale(0.97);
+  z-index: 1;
+}
+
+.card-stack > *:nth-child(3) {
+  transform: translateY(16px) scale(0.94);
+  z-index: 0;
+}
+
+/* Touch action for swipe */
+.swipe-card {
+  touch-action: none;
+  cursor: grab;
+}
+
+.swipe-card:active {
+  cursor: grabbing;
+}
+
+/* Like/Nope stamps */
+.stamp-like {
+  border: 4px solid #39FF14;
+  color: #39FF14;
+  transform: rotate(-15deg);
+  font-weight: 900;
+  font-size: 2.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.stamp-nope {
+  border: 4px solid #FF1493;
+  color: #FF1493;
+  transform: rotate(15deg);
+  font-weight: 900;
+  font-size: 2.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+/* Noise texture overlay */
+.noise-texture {
+  position: relative;
+}
+
+.noise-texture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.05;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .stamp-like, .stamp-nope {
+    font-size: 1.8rem;
+  }
+}
