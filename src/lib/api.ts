@@ -2,33 +2,30 @@ import { supabase } from './supabase'
 import type { Position, Profile, MatchWithProfile } from '../types'
 import { PONTA_POSITIONS, MEIO_POSITIONS } from '../types'
 
-// Determine if two societies allow mutual visibility
-// Same society → blocked, except when either is 'Independente'
+// A dupla precisa de UM Ponta + UM Meio.
+// Regras:
+//   - ANY é compatível com todos
+//   - Só Ponta → precisa de alguém com Meio
+//   - Só Meio  → precisa de alguém com Ponta
+//   - Ponta+Meio → compatível com qualquer um que tenha Ponta ou Meio
+export function areCompatible(myPositions: Position[], theirPositions: Position[]): boolean {
+  if (myPositions.includes('ANY') || theirPositions.includes('ANY')) return true
+
+  const myHasPonta = myPositions.some(p => PONTA_POSITIONS.includes(p))
+  const myHasMeio  = myPositions.some(p => MEIO_POSITIONS.includes(p))
+  const theirHasPonta = theirPositions.some(p => PONTA_POSITIONS.includes(p))
+  const theirHasMeio  = theirPositions.some(p => MEIO_POSITIONS.includes(p))
+
+  if (myHasPonta && !myHasMeio) return theirHasMeio
+  if (myHasMeio  && !myHasPonta) return theirHasPonta
+  if (myHasPonta && myHasMeio)   return theirHasPonta || theirHasMeio
+  return false
+}
+
+// Sociedades diferentes = compatível. Independente = sempre compatível.
 export function areSocietiesCompatible(mySociety: string, theirSociety: string): boolean {
   if (mySociety === 'Independente' || theirSociety === 'Independente') return true
   return mySociety !== theirSociety
-}
-
-// Determine if two position sets are compatible
-export function areCompatible(myPositions: Position[], theirPositions: Position[]): boolean {
-  const myHasAny = myPositions.includes('ANY')
-  const theirHasAny = theirPositions.includes('ANY')
-
-  if (myHasAny || theirHasAny) return true
-
-  const myHasPonta = myPositions.some(p => PONTA_POSITIONS.includes(p))
-  const myHasMeio = myPositions.some(p => MEIO_POSITIONS.includes(p))
-  const theirHasPonta = theirPositions.some(p => PONTA_POSITIONS.includes(p))
-  const theirHasMeio = theirPositions.some(p => MEIO_POSITIONS.includes(p))
-
-  // I want Ponta → they need Meio
-  // I want Meio → they need Ponta
-  // I want both → they can be either
-  if (myHasPonta && !myHasMeio) return theirHasMeio
-  if (myHasMeio && !myHasPonta) return theirHasPonta
-  if (myHasPonta && myHasMeio) return theirHasPonta || theirHasMeio
-
-  return false
 }
 
 export async function getDiscoverProfiles(userId: string): Promise<Profile[]> {

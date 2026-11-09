@@ -195,7 +195,7 @@ export default function Profile() {
         <p className="text-sm font-bold text-white/70 mb-3">Posições *</p>
         <div className="space-y-3">
           <div>
-            <p className="text-xs font-bold mb-2" style={{ color: '#FF6B35' }}>🎤 Pontas</p>
+            <p className="text-xs font-bold mb-2" style={{ color: '#FF6B35' }}>🎤 Pontas (PM, LO, GW, OW)</p>
             <div className="grid grid-cols-2 gap-2">
               {PONTA_POSITIONS.map(pos => (
                 <PositionBtn key={pos} pos={pos} selected={positions} onToggle={togglePosition} color="#FF6B35" />
@@ -203,7 +203,7 @@ export default function Profile() {
             </div>
           </div>
           <div>
-            <p className="text-xs font-bold mb-2" style={{ color: '#00BFFF' }}>🎯 Meios</p>
+            <p className="text-xs font-bold mb-2" style={{ color: '#00BFFF' }}>🎯 Meios (MG, MO, DPM, DLO)</p>
             <div className="grid grid-cols-2 gap-2">
               {MEIO_POSITIONS.map(pos => (
                 <PositionBtn key={pos} pos={pos} selected={positions} onToggle={togglePosition} color="#00BFFF" />

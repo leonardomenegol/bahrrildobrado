@@ -305,14 +305,14 @@ export default function Signup() {
 
                 <div className="space-y-4">
                   <PositionGroup
-                    title="🎤 Pontas / Primeiras falas"
+                    title="🎤 Pontas (PM, LO, GW, OW)"
                     positions={PONTA_POSITIONS}
                     selected={positions}
                     onToggle={togglePosition}
                     color="#FF6B35"
                   />
                   <PositionGroup
-                    title="🎯 Meios / Segundas falas"
+                    title="🎯 Meios (MG, MO, DPM, DLO)"
                     positions={MEIO_POSITIONS}
                     selected={positions}
                     onToggle={togglePosition}
@@ -339,10 +339,10 @@ export default function Signup() {
                   <p className="text-center text-xs text-white/40 mt-3">
                     {positions.some(p => PONTA_POSITIONS.includes(p as any)) &&
                      positions.some(p => MEIO_POSITIONS.includes(p as any))
-                      ? '✅ Compatível com pontas e meios'
+                      ? '✅ Compatível com Pontas e Meios'
                       : positions.some(p => PONTA_POSITIONS.includes(p as any))
-                      ? '🎤 Você vai aparecer para quem busca meios'
-                      : '🎯 Você vai aparecer para quem busca pontas'}
+                      ? '🎤 Ponta — você vai aparecer para quem tem Meio'
+                      : '🎯 Meio — você vai aparecer para quem tem Ponta'}
                   </p>
                 )}
               </motion.div>

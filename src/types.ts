@@ -1,27 +1,33 @@
 // Positions in British Parliamentary debate
 export type Position =
-  | 'PM'   // Prime Minister (1st Gov - Ponta)
-  | 'LO'   // Leader of Opposition (1st Opp - Ponta)
-  | 'MG'   // Member of Government (2nd Gov - Ponta)
-  | 'MO'   // Member of Opposition (2nd Opp - Ponta)
-  | 'DPM'  // Deputy Prime Minister (1st Gov - Meio)
-  | 'DLO'  // Deputy Leader of Opposition (1st Opp - Meio)
-  | 'GW'   // Government Whip (2nd Gov - Meio)
-  | 'OW'   // Opposition Whip (2nd Opp - Meio)
+  | 'PM'   // Primeiro Ministro    — Ponta, Primeiras falas
+  | 'LO'   // Líder da Oposição    — Ponta, Primeiras falas
+  | 'MG'   // Extensão de Governo  — Meio,  Primeiras falas
+  | 'MO'   // Extensão de Oposição — Meio,  Primeiras falas
+  | 'DPM'  // Adjunto de Governo   — Meio,  Segundas falas
+  | 'DLO'  // Adjunto de Oposição  — Meio,  Segundas falas
+  | 'GW'   // Whip de Governo      — Ponta, Segundas falas
+  | 'OW'   // Whip de Oposição     — Ponta, Segundas falas
   | 'ANY'  // Tanto faz
 
-export const PONTA_POSITIONS: Position[] = ['PM', 'LO', 'MG', 'MO']
-export const MEIO_POSITIONS: Position[] = ['DPM', 'DLO', 'GW', 'OW']
+// Papel na bancada: Ponta (abre o caso) vs Meio (fecha o caso)
+// A dupla precisa ter UM Ponta + UM Meio
+export const PONTA_POSITIONS: Position[] = ['PM', 'LO', 'GW', 'OW']
+export const MEIO_POSITIONS: Position[]  = ['MG', 'MO', 'DPM', 'DLO']
+
+// Fala: Primeiras (1ª bancada) vs Segundas (2ª bancada) — usado só para exibição
+export const PRIMEIRAS_FALAS: Position[] = ['PM', 'LO', 'MG', 'MO']
+export const SEGUNDAS_FALAS: Position[]  = ['DPM', 'DLO', 'GW', 'OW']
 
 export const POSITION_LABELS: Record<Position, string> = {
-  PM: 'Primeiro Governo (PM)',
-  LO: 'Primeira Oposição (LO)',
-  MG: 'Segundo Governo (MG)',
-  MO: 'Segunda Oposição (MO)',
+  PM:  'Primeiro Ministro (PM)',
+  LO:  'Líder da Oposição (LO)',
+  MG:  'Extensão de Governo (MG)',
+  MO:  'Extensão de Oposição (MO)',
   DPM: 'Adjunto de Governo (DPM)',
   DLO: 'Adjunto de Oposição (DLO)',
-  GW: 'Whip de Governo (GW)',
-  OW: 'Whip de Oposição (OW)',
+  GW:  'Whip de Governo (GW)',
+  OW:  'Whip de Oposição (OW)',
   ANY: 'Tanto faz',
 }
 
