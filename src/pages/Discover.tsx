@@ -45,11 +45,9 @@ export default function Discover() {
     try {
       const decision = direction === 'right' ? 'like' : 'pass'
       const result = await recordSwipe(profile.id, currentProfile.id, decision)
-
       if (result.matched) {
         setMatchData({ matched: true, matchedProfile: currentProfile })
       }
-
       setCurrentIndex(prev => prev + 1)
     } catch (err) {
       toast.error('Erro ao registrar ação')
@@ -61,11 +59,7 @@ export default function Discover() {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
+        <motion.div className="text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <motion.div
             className="text-5xl mb-4"
             animate={{ rotate: 360 }}
@@ -82,9 +76,9 @@ export default function Discover() {
   const hasProfiles = currentIndex < candidates.length
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-between px-4 py-4 max-w-sm mx-auto w-full">
+    <div className="flex-1 flex flex-col items-center px-4 py-4 max-w-sm mx-auto w-full">
       {/* Header */}
-      <div className="w-full text-center mb-2">
+      <div className="w-full text-center mb-3">
         <h1
           className="text-2xl font-black"
           style={{
@@ -104,28 +98,27 @@ export default function Discover() {
         )}
       </div>
 
-      {/* Card area */}
-      <div className="flex-1 w-full relative" style={{ maxHeight: 'calc(100dvh - 280px)' }}>
+      {/* Card area — altura fixa para garantir visibilidade */}
+      <div className="w-full mb-4" style={{ height: 460 }}>
         {hasProfiles ? (
-          <div className="relative w-full h-full card-stack">
-            {/* Next card (behind) */}
+          <div className="relative w-full h-full">
+            {/* Card de trás */}
             {nextProfile && (
-              <div className="absolute inset-0" style={{ zIndex: 1 }}>
-                <SwipeCard
-                  profile={nextProfile}
-                  onSwipe={() => {}}
-                  isTop={false}
-                />
+              <div
+                className="absolute inset-0 rounded-3xl overflow-hidden"
+                style={{ transform: 'translateY(8px) scale(0.97)', zIndex: 1 }}
+              >
+                <SwipeCard profile={nextProfile} onSwipe={() => {}} isTop={false} />
               </div>
             )}
-            {/* Current card (top) */}
+            {/* Card do topo */}
             <AnimatePresence>
-              <div className="absolute inset-0" style={{ zIndex: 2 }} key={currentProfile.id}>
-                <SwipeCard
-                  profile={currentProfile}
-                  onSwipe={handleSwipe}
-                  isTop={true}
-                />
+              <div
+                className="absolute inset-0"
+                style={{ zIndex: 2 }}
+                key={currentProfile.id}
+              >
+                <SwipeCard profile={currentProfile} onSwipe={handleSwipe} isTop={true} />
               </div>
             </AnimatePresence>
           </div>
@@ -162,7 +155,7 @@ export default function Discover() {
 
       {/* Action buttons */}
       {hasProfiles && (
-        <div className="flex items-center justify-center gap-6 w-full pb-2">
+        <div className="flex items-center justify-center gap-6 w-full">
           <motion.button
             onClick={() => handleSwipe('left')}
             disabled={actionLoading}

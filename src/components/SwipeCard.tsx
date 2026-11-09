@@ -40,7 +40,7 @@ export default function SwipeCard({ profile, onSwipe, isTop }: SwipeCardProps) {
 
   return (
     <motion.div
-      className="absolute inset-0 swipe-card"
+      className="w-full h-full swipe-card"
       style={{ x, rotate }}
       animate={controls}
       drag={isTop ? 'x' : false}
@@ -49,17 +49,16 @@ export default function SwipeCard({ profile, onSwipe, isTop }: SwipeCardProps) {
       onDragEnd={handleDragEnd}
       whileTap={{ cursor: 'grabbing' }}
     >
-      {/* Card */}
       <div
-        className="w-full h-full rounded-3xl overflow-hidden relative"
+        className="w-full h-full rounded-3xl overflow-hidden flex flex-col"
         style={{
           background: 'linear-gradient(135deg, #1a1a3e, #0d1a2e)',
           border: '1px solid rgba(255,255,255,0.1)',
           boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
         }}
       >
-        {/* Photo */}
-        <div className="relative h-3/5 overflow-hidden">
+        {/* Foto — altura fixa */}
+        <div className="relative overflow-hidden flex-shrink-0" style={{ height: 280 }}>
           {profile.photo_url ? (
             <img
               src={profile.photo_url}
@@ -79,7 +78,7 @@ export default function SwipeCard({ profile, onSwipe, isTop }: SwipeCardProps) {
           {/* Gradient overlay */}
           <div
             className="absolute inset-0"
-            style={{ background: 'linear-gradient(to top, rgba(13,13,46,0.9) 0%, transparent 60%)' }}
+            style={{ background: 'linear-gradient(to top, rgba(13,13,46,0.95) 0%, transparent 50%)' }}
           />
 
           {/* LIKE stamp */}
@@ -99,8 +98,8 @@ export default function SwipeCard({ profile, onSwipe, isTop }: SwipeCardProps) {
           </motion.div>
         </div>
 
-        {/* Info section */}
-        <div className="px-5 py-4 flex flex-col gap-3">
+        {/* Infos */}
+        <div className="flex-1 px-5 py-4 flex flex-col gap-2 overflow-hidden">
           <div>
             <h2
               className="text-2xl font-black text-white leading-tight"
