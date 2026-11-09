@@ -130,22 +130,37 @@ export async function recordSwipe(
 export async function getMatches(profileId: string): Promise<MatchWithProfile[]> {
   const { data: matches, error } = await supabase
     .from('matches')
-    .select(`
-      *,
-      profile_1:profiles!matches_user_1_id_fkey(*),
-      profile_2:profiles!matches_user_2_id_fkey(*)
-    `)
+    .select('*')
     .or(`user_1_id.eq.${profileId},user_2_id.eq.${profileId}`)
     .order('created_at', { ascending: false })
 
   if (error) throw error
+  if (!matches || matches.length === 0) return []
 
-  return (matches ?? [])
-    .map(m => ({
-      ...m,
-      profile: m.user_1_id === profileId ? m.profile_2 : m.profile_1,
-    }))
-    .filter(m => m.profile && m.profile.is_active)
+  // Collect the IDs of the other participants
+  const otherIds = matches.map(m =>
+    m.user_1_id === profileId ? m.user_2_id : m.user_1_id
+  )
+
+  // Fetch only active profiles of those participants
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('*')
+    .in('id', otherIds)
+    .eq('is_active', true)
+
+  if (!profiles) return []
+
+  const profileMap = Object.fromEntries(profiles.map(p => [p.id, p]))
+
+  return matches
+    .map(m => {
+      const otherId = m.user_1_id === profileId ? m.user_2_id : m.user_1_id
+      const profile = profileMap[otherId]
+      if (!profile) return null
+      return { ...m, profile }
+    })
+    .filter(Boolean) as MatchWithProfile[]
 }
 
 export function formatWhatsApp(raw: string): string {
