@@ -43,14 +43,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       else setLoading(false)
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       const u = session?.user ?? null
       setUser(u)
-      if (u) fetchProfile(u.id)
-      else setProfile(null)
+      if (u && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED')) {
+        fetchProfile(u.id)
+      }
+      if (event === 'SIGNED_OUT') setProfile(null)
+      if (event === 'INITIAL_SESSION') setLoading(false)
     })
 
-    return () => subscription.unsubscribe()
+    // Reconecta ao recuperar conexão de rede
+    function handleOnline() {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) fetchProfile(session.user.id)
+      })
+    }
+    window.addEventListener('online', handleOnline)
+
+    return () => {
+      subscription.unsubscribe()
+      window.removeEventListener('online', handleOnline)
+    }
   }, [])
 
   return (
