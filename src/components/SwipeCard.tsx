@@ -120,7 +120,7 @@ export default function SwipeCard({ profile, onSwipe, isTop }: SwipeCardProps) {
                     className="px-3 py-1 rounded-full text-xs font-bold"
                     style={{ background: 'rgba(255,107,53,0.2)', border: '1px solid #FF6B35', color: '#FF6B35' }}
                   >
-                    🎤 Primeiras falas
+                    🎤 Pontas
                   </span>
                 )}
                 {profile.positions.some(p => MEIO_POSITIONS.includes(p as any)) && (
@@ -128,7 +128,7 @@ export default function SwipeCard({ profile, onSwipe, isTop }: SwipeCardProps) {
                     className="px-3 py-1 rounded-full text-xs font-bold"
                     style={{ background: 'rgba(0,191,255,0.2)', border: '1px solid #00BFFF', color: '#00BFFF' }}
                   >
-                    🎯 Segundas falas
+                    🎯 Meios
                   </span>
                 )}
               </>
