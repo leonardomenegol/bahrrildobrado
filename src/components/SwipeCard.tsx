@@ -1,4 +1,4 @@
-import { useRef, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { motion, useMotionValue, useTransform, useAnimation } from 'framer-motion'
 import type { Profile } from '../types'
 import { getPositionGroups } from '../types'
@@ -18,6 +18,7 @@ export default function SwipeCard({ profile, onSwipe, isTop }: SwipeCardProps) {
   const likeOpacity = useTransform(x, [20, 100], [0, 1])
   const nopeOpacity = useTransform(x, [-100, -20], [1, 0])
   const dragStartX = useRef(0)
+  const [bioOpen, setBioOpen] = useState(false)
 
   async function handleDragEnd(_: any, info: { offset: { x: number } }) {
     const threshold = 80
@@ -155,12 +156,44 @@ export default function SwipeCard({ profile, onSwipe, isTop }: SwipeCardProps) {
 
           {/* Bio */}
           {profile.bio && (
-            <p className="text-white/60 text-sm leading-relaxed line-clamp-2">
+            <p
+              className="text-white/60 text-sm leading-relaxed line-clamp-2 cursor-pointer hover:text-white/80 transition-colors"
+              onClick={e => { e.stopPropagation(); setBioOpen(true) }}
+            >
               {profile.bio}
             </p>
           )}
         </div>
       </div>
+
+      {/* Bio modal */}
+      {bioOpen && (
+        <motion.div
+          className="absolute inset-0 z-50 flex items-end"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          onClick={() => setBioOpen(false)}
+        >
+          <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} />
+          <motion.div
+            className="relative w-full rounded-t-3xl p-6"
+            style={{ background: 'linear-gradient(135deg, #1a1a3e, #0d1a2e)', border: '1px solid rgba(255,255,255,0.15)' }}
+            initial={{ y: 100 }}
+            animate={{ y: 0 }}
+            onClick={e => e.stopPropagation()}
+          >
+            <p className="text-white/40 text-xs mb-3 text-center">Apresentação de {profile.display_name}</p>
+            <p className="text-white/80 text-sm leading-relaxed">{profile.bio}</p>
+            <button
+              onClick={() => setBioOpen(false)}
+              className="mt-5 w-full py-2 rounded-xl text-sm text-white/50 font-semibold"
+              style={{ background: 'rgba(255,255,255,0.08)' }}
+            >
+              Fechar
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
     </motion.div>
   )
 }
