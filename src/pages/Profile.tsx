@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Camera, User, LogOut, Trash2, Save } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
@@ -32,6 +32,19 @@ export default function Profile() {
       return withoutAny.includes(pos) ? withoutAny.filter(p => p !== pos) : [...withoutAny, pos]
     })
   }
+
+  // Re-popula o formulário quando o profile carregar (ex: F5)
+  useEffect(() => {
+    if (!profile) return
+    setDisplayName(profile.display_name ?? '')
+    setSociety(profile.society ?? '')
+    setWhatsapp(profile.whatsapp ?? '')
+    setBio(profile.bio ?? '')
+    setPositions(profile.positions ?? [])
+    setLevel((profile.level as DebateLevel) ?? 'Open')
+    setPhotoPreview(profile.photo_url ?? null)
+    setIsActive(profile.is_active ?? true)
+  }, [profile?.id])
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
