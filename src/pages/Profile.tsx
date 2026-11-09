@@ -63,11 +63,12 @@ export default function Profile() {
       if (photoFile) {
         const ext = photoFile.name.split('.').pop()
         const path = `${user.id}/avatar.${ext}`
-        const { error: uploadError } = await supabase.storage.from('avatars').upload(path, photoFile, { upsert: true })
-        if (!uploadError) {
-          const { data } = supabase.storage.from('avatars').getPublicUrl(path)
-          photoUrl = data.publicUrl
-        }
+        const { error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(path, photoFile, { upsert: true, contentType: photoFile.type })
+        if (uploadError) throw new Error('Erro ao enviar foto: ' + uploadError.message)
+        const { data } = supabase.storage.from('avatars').getPublicUrl(path)
+        photoUrl = `${data.publicUrl}?t=${Date.now()}`
       }
 
       const { error } = await supabase
