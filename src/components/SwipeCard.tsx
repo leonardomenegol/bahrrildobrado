@@ -1,7 +1,7 @@
 import { useRef, type ReactNode } from 'react'
 import { motion, useMotionValue, useTransform, useAnimation } from 'framer-motion'
 import type { Profile } from '../types'
-import { POSITION_SHORT, PONTA_POSITIONS, MEIO_POSITIONS } from '../types'
+import { PONTA_POSITIONS, MEIO_POSITIONS } from '../types'
 import { User } from 'lucide-react'
 
 interface SwipeCardProps {
@@ -18,12 +18,6 @@ export default function SwipeCard({ profile, onSwipe, isTop }: SwipeCardProps) {
   const likeOpacity = useTransform(x, [20, 100], [0, 1])
   const nopeOpacity = useTransform(x, [-100, -20], [1, 0])
   const dragStartX = useRef(0)
-
-  function getPositionColor(pos: string) {
-    if (PONTA_POSITIONS.includes(pos as any)) return '#FF6B35'
-    if (MEIO_POSITIONS.includes(pos as any)) return '#00BFFF'
-    return '#BF00FF'
-  }
 
   async function handleDragEnd(_: any, info: { offset: { x: number } }) {
     const threshold = 80
@@ -120,19 +114,24 @@ export default function SwipeCard({ profile, onSwipe, isTop }: SwipeCardProps) {
                 ✨ Tanto faz
               </span>
             ) : (
-              profile.positions.map(pos => (
-                <span
-                  key={pos}
-                  className="px-2 py-1 rounded-full text-xs font-bold"
-                  style={{
-                    background: `${getPositionColor(pos)}20`,
-                    border: `1px solid ${getPositionColor(pos)}`,
-                    color: getPositionColor(pos),
-                  }}
-                >
-                  {POSITION_SHORT[pos]}
-                </span>
-              ))
+              <>
+                {profile.positions.some(p => PONTA_POSITIONS.includes(p as any)) && (
+                  <span
+                    className="px-3 py-1 rounded-full text-xs font-bold"
+                    style={{ background: 'rgba(255,107,53,0.2)', border: '1px solid #FF6B35', color: '#FF6B35' }}
+                  >
+                    🎤 Primeiras falas
+                  </span>
+                )}
+                {profile.positions.some(p => MEIO_POSITIONS.includes(p as any)) && (
+                  <span
+                    className="px-3 py-1 rounded-full text-xs font-bold"
+                    style={{ background: 'rgba(0,191,255,0.2)', border: '1px solid #00BFFF', color: '#00BFFF' }}
+                  >
+                    🎯 Segundas falas
+                  </span>
+                )}
+              </>
             )}
           </div>
 
