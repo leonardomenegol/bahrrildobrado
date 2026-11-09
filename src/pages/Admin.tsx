@@ -70,14 +70,13 @@ export default function Admin() {
   }
 
   async function toggleActive(profileId: string, currentState: boolean) {
-    const { error, count } = await supabase
+    const { error } = await supabase
       .from('profiles')
       .update({ is_active: !currentState })
       .eq('id', profileId)
-      .select('id', { count: 'exact', head: true })
+      .select('id')
 
     if (error) { toast.error('Erro ao atualizar: ' + error.message); return }
-    if (count === 0) { toast.error('Sem permissão para atualizar este perfil'); return }
     setProfiles(prev => prev.map(p => p.id === profileId ? { ...p, is_active: !currentState } : p))
     toast.success(currentState ? 'Perfil desativado' : 'Perfil ativado')
   }
