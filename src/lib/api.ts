@@ -140,10 +140,12 @@ export async function getMatches(profileId: string): Promise<MatchWithProfile[]>
 
   if (error) throw error
 
-  return (matches ?? []).map(m => ({
-    ...m,
-    profile: m.user_1_id === profileId ? m.profile_2 : m.profile_1,
-  }))
+  return (matches ?? [])
+    .map(m => ({
+      ...m,
+      profile: m.user_1_id === profileId ? m.profile_2 : m.profile_1,
+    }))
+    .filter(m => m.profile && m.profile.is_active)
 }
 
 export function formatWhatsApp(raw: string): string {
