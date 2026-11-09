@@ -139,7 +139,7 @@ export default function Welcome() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
         >
-          {['🏛️ Parlamentar Britânico', '💚 Match em tempo real', '💬 WhatsApp direto'].map((f, i) => (
+          {['🧉 GDO', '🌴 SDS', '💬 WhatsApp direto'].map((f, i) => (
             <span
               key={i}
               className="px-3 py-1 rounded-full text-xs font-semibold"
