@@ -42,13 +42,13 @@ export default function Discover() {
   async function handleSwipe(direction: 'left' | 'right') {
     if (!profile || !currentProfile || actionLoading) return
     setActionLoading(true)
+    const decision = direction === 'right' ? 'like' : 'pass'
+    setCurrentIndex(prev => prev + 1)
     try {
-      const decision = direction === 'right' ? 'like' : 'pass'
       const result = await recordSwipe(profile.id, currentProfile.id, decision)
       if (result.matched) {
         setMatchData({ matched: true, matchedProfile: currentProfile })
       }
-      setCurrentIndex(prev => prev + 1)
     } catch (err) {
       toast.error('Erro ao registrar ação')
     } finally {
