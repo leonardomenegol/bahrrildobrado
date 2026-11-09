@@ -182,7 +182,8 @@ export default function SwipeCard({ profile, onSwipe, isTop }: SwipeCardProps) {
             animate={{ y: 0 }}
             onClick={e => e.stopPropagation()}
           >
-            <p className="text-white/40 text-xs mb-3 text-center">Apresentação de {profile.display_name}</p>
+            <p className="text-white/40 text-xs mb-1 text-center">Apresentação de {profile.display_name}</p>
+            <p className="text-white/20 text-xs mb-3 text-center">{profile.name}</p>
             <p className="text-white/80 text-sm leading-relaxed">{profile.bio}</p>
             <button
               onClick={() => setBioOpen(false)}
