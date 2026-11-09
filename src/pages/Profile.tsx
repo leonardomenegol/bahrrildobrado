@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Camera, User, LogOut, Trash2, Save } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
-import { PONTA_POSITIONS, MEIO_POSITIONS, POSITION_LABELS, SOCIETIES, type Position, type DebateLevel } from '../types'
+import { POSITION_LABELS, SOCIETIES, type Position, type DebateLevel } from '../types'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
@@ -43,6 +43,16 @@ export default function Profile() {
     if (!profile || !user) return
     if (!displayName || !society || !whatsapp) { toast.error('Preencha todos os campos obrigatórios'); return }
     if (positions.length === 0) { toast.error('Selecione pelo menos uma posição'); return }
+    if (!positions.includes('ANY')) {
+      if (!positions.includes('PM') && !positions.includes('DPM'))
+        return void toast.error('Selecione PM ou Adjunto de Governo (DPM)')
+      if (!positions.includes('LO') && !positions.includes('DLO'))
+        return void toast.error('Selecione LO ou Adjunto de Oposição (DLO)')
+      if (!positions.includes('MG') && !positions.includes('GW'))
+        return void toast.error('Selecione Extensão de Governo (MG) ou Whip de Governo (GW)')
+      if (!positions.includes('MO') && !positions.includes('OW'))
+        return void toast.error('Selecione Extensão de Oposição (MO) ou Whip de Oposição (OW)')
+    }
 
     setSaving(true)
     try {
@@ -222,21 +232,33 @@ export default function Profile() {
         style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
       >
         <p className="text-sm font-bold text-white/70 mb-3">Posições *</p>
-        <div className="space-y-3">
+        <div className="space-y-5">
+          {/* Primeiras bancadas */}
           <div>
-            <p className="text-xs font-bold mb-2" style={{ color: '#FF6B35' }}>🎤 Pontas (PM, LO, GW, OW)</p>
+            <p className="text-xs font-bold mb-2" style={{ color: '#FF6B35' }}>🥇 Primeiras bancadas</p>
             <div className="grid grid-cols-2 gap-2">
-              {PONTA_POSITIONS.map(pos => (
-                <PositionBtn key={pos} pos={pos} selected={positions} onToggle={togglePosition} color="#FF6B35" />
-              ))}
+              <div className="flex flex-col gap-2">
+                <PositionBtn pos="PM"  selected={positions} onToggle={togglePosition} color="#FF6B35" />
+                <PositionBtn pos="DPM" selected={positions} onToggle={togglePosition} color="#FF6B35" />
+              </div>
+              <div className="flex flex-col gap-2">
+                <PositionBtn pos="LO"  selected={positions} onToggle={togglePosition} color="#FF6B35" />
+                <PositionBtn pos="DLO" selected={positions} onToggle={togglePosition} color="#FF6B35" />
+              </div>
             </div>
           </div>
+          {/* Segundas bancadas */}
           <div>
-            <p className="text-xs font-bold mb-2" style={{ color: '#00BFFF' }}>🎯 Meios (MG, MO, DPM, DLO)</p>
+            <p className="text-xs font-bold mb-2" style={{ color: '#00BFFF' }}>🥈 Segundas bancadas</p>
             <div className="grid grid-cols-2 gap-2">
-              {MEIO_POSITIONS.map(pos => (
-                <PositionBtn key={pos} pos={pos} selected={positions} onToggle={togglePosition} color="#00BFFF" />
-              ))}
+              <div className="flex flex-col gap-2">
+                <PositionBtn pos="MG" selected={positions} onToggle={togglePosition} color="#00BFFF" />
+                <PositionBtn pos="GW" selected={positions} onToggle={togglePosition} color="#00BFFF" />
+              </div>
+              <div className="flex flex-col gap-2">
+                <PositionBtn pos="MO" selected={positions} onToggle={togglePosition} color="#00BFFF" />
+                <PositionBtn pos="OW" selected={positions} onToggle={togglePosition} color="#00BFFF" />
+              </div>
             </div>
           </div>
           <PositionBtn pos="ANY" selected={positions} onToggle={togglePosition} color="#BF00FF" fullWidth />

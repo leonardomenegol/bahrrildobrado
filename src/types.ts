@@ -19,32 +19,39 @@ export const PRIMEIRAS_FALAS: Position[] = ['PM', 'LO', 'MG', 'MO']
 export const SEGUNDAS_FALAS:  Position[] = ['DPM', 'DLO', 'GW', 'OW']
 
 // Derive display labels from selected positions
+// Each tag requires all 4 members:
+//   "Pontas"    = PM + LO + GW + OW
+//   "Meios"     = MG + MO + DPM + DLO
+//   "Primeiras" = PM + LO + MG + MO
+//   "Segundas"  = DPM + DLO + GW + OW
+// Positions covered by a matched group are hidden; leftovers shown as individual siglas.
 export function getPositionGroups(positions: Position[]): string[] {
   if (!positions || positions.length === 0) return []
   if (positions.includes('ANY')) return ['Tanto faz']
 
-  const hasPonta    = positions.some(p => PONTA_POSITIONS.includes(p))
-  const hasMeio     = positions.some(p => MEIO_POSITIONS.includes(p))
-  const hasPrimeira = positions.some(p => PRIMEIRAS_FALAS.includes(p))
-  const hasSegunda  = positions.some(p => SEGUNDAS_FALAS.includes(p))
+  const has = (p: Position) => positions.includes(p)
 
-  // Dimensão 1: Ponta/Meio
-  let papel = ''
-  if (hasPonta && hasMeio)   papel = 'Pontas e Meios'
-  else if (hasPonta)         papel = 'Pontas'
-  else if (hasMeio)          papel = 'Meios'
+  const GROUPS: { label: string; members: Position[] }[] = [
+    { label: 'Pontas',    members: ['PM', 'LO', 'GW', 'OW'] },
+    { label: 'Meios',     members: ['MG', 'MO', 'DPM', 'DLO'] },
+    { label: 'Primeiras', members: ['PM', 'LO', 'MG', 'MO'] },
+    { label: 'Segundas',  members: ['DPM', 'DLO', 'GW', 'OW'] },
+  ]
 
-  // Dimensão 2: Primeira/Segunda fala
-  let fala = ''
-  if (hasPrimeira && hasSegunda) fala = 'Primeiras e Segundas'
-  else if (hasPrimeira)          fala = 'Primeiras'
-  else if (hasSegunda)           fala = 'Segundas'
+  const tags: string[] = []
+  const covered = new Set<Position>()
 
-  // Combina as duas dimensões quando ambas são informativas
-  if (papel && fala) return [`${papel} · ${fala}`]
-  if (papel)         return [papel]
-  if (fala)          return [fala]
-  return ['Variadas']
+  for (const group of GROUPS) {
+    if (group.members.every(p => has(p))) {
+      tags.push(group.label)
+      group.members.forEach(p => covered.add(p))
+    }
+  }
+
+  const ORDER: Position[] = ['PM', 'LO', 'MG', 'MO', 'DPM', 'DLO', 'GW', 'OW']
+  const leftover = ORDER.filter(p => has(p) && !covered.has(p))
+
+  return [...tags, ...leftover]
 }
 
 export const POSITION_LABELS: Record<Position, string> = {

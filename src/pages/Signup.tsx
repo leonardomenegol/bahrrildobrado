@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, ArrowRight, User, Mail, Lock, Phone, BookOpen, Camera } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import { PONTA_POSITIONS, MEIO_POSITIONS, POSITION_LABELS, SOCIETIES, type Position, type DebateLevel } from '../types'
+import { POSITION_LABELS, SOCIETIES, type Position, type DebateLevel } from '../types'
 import toast from 'react-hot-toast'
 
 const STEPS = ['conta', 'perfil', 'posicoes', 'foto'] as const
@@ -63,6 +63,10 @@ export default function Signup() {
         toast.error('Preencha todos os campos')
         return false
       }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        toast.error('Digite um e-mail válido')
+        return false
+      }
       if (password.length < 8) {
         toast.error('Senha deve ter pelo menos 8 caracteres')
         return false
@@ -87,6 +91,24 @@ export default function Signup() {
       if (positions.length === 0) {
         toast.error('Selecione pelo menos uma posição')
         return false
+      }
+      if (!positions.includes('ANY')) {
+        if (!positions.includes('PM') && !positions.includes('DPM')) {
+          toast.error('Selecione PM ou Adjunto de Governo (DPM)')
+          return false
+        }
+        if (!positions.includes('LO') && !positions.includes('DLO')) {
+          toast.error('Selecione LO ou Adjunto de Oposição (DLO)')
+          return false
+        }
+        if (!positions.includes('MG') && !positions.includes('GW')) {
+          toast.error('Selecione Extensão de Governo (MG) ou Whip de Governo (GW)')
+          return false
+        }
+        if (!positions.includes('MO') && !positions.includes('OW')) {
+          toast.error('Selecione Extensão de Oposição (MO) ou Whip de Oposição (OW)')
+          return false
+        }
       }
     }
     return true
@@ -335,21 +357,41 @@ export default function Signup() {
                   <p className="text-white/50 text-sm mt-1">Em quais funções você debate?</p>
                 </div>
 
-                <div className="space-y-4">
-                  <PositionGroup
-                    title="🎤 Pontas (PM, LO, GW, OW)"
-                    positions={PONTA_POSITIONS}
-                    selected={positions}
-                    onToggle={togglePosition}
-                    color="#FF6B35"
-                  />
-                  <PositionGroup
-                    title="🎯 Meios (MG, MO, DPM, DLO)"
-                    positions={MEIO_POSITIONS}
-                    selected={positions}
-                    onToggle={togglePosition}
-                    color="#00BFFF"
-                  />
+                <div className="space-y-5">
+                  {/* Primeiras bancadas */}
+                  <div>
+                    <p className="text-xs font-bold mb-2" style={{ color: '#FF6B35' }}>🥇 Primeiras bancadas</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {/* Coluna Governo */}
+                      <div className="flex flex-col gap-2">
+                        <PosButton pos="PM" selected={positions} onToggle={togglePosition} color="#FF6B35" />
+                        <PosButton pos="DPM" selected={positions} onToggle={togglePosition} color="#FF6B35" />
+                      </div>
+                      {/* Coluna Oposição */}
+                      <div className="flex flex-col gap-2">
+                        <PosButton pos="LO" selected={positions} onToggle={togglePosition} color="#FF6B35" />
+                        <PosButton pos="DLO" selected={positions} onToggle={togglePosition} color="#FF6B35" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Segundas bancadas */}
+                  <div>
+                    <p className="text-xs font-bold mb-2" style={{ color: '#00BFFF' }}>🥈 Segundas bancadas</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {/* Coluna Governo */}
+                      <div className="flex flex-col gap-2">
+                        <PosButton pos="MG" selected={positions} onToggle={togglePosition} color="#00BFFF" />
+                        <PosButton pos="GW" selected={positions} onToggle={togglePosition} color="#00BFFF" />
+                      </div>
+                      {/* Coluna Oposição */}
+                      <div className="flex flex-col gap-2">
+                        <PosButton pos="MO" selected={positions} onToggle={togglePosition} color="#00BFFF" />
+                        <PosButton pos="OW" selected={positions} onToggle={togglePosition} color="#00BFFF" />
+                      </div>
+                    </div>
+                  </div>
+
                   <motion.button
                     type="button"
                     onClick={() => togglePosition('ANY')}
@@ -366,17 +408,6 @@ export default function Signup() {
                     ✨ Tanto faz — aceito qualquer posição
                   </motion.button>
                 </div>
-
-                {positions.length > 0 && !positions.includes('ANY') && (
-                  <p className="text-center text-xs text-white/40 mt-3">
-                    {positions.some(p => PONTA_POSITIONS.includes(p as any)) &&
-                     positions.some(p => MEIO_POSITIONS.includes(p as any))
-                      ? '✅ Compatível com Pontas e Meios'
-                      : positions.some(p => PONTA_POSITIONS.includes(p as any))
-                      ? '🎤 Ponta — você vai aparecer para quem tem Meio'
-                      : '🎯 Meio — você vai aparecer para quem tem Ponta'}
-                  </p>
-                )}
               </motion.div>
             )}
 
@@ -498,39 +529,26 @@ function Field({ label, icon, children }: { label: string; icon: React.ReactNode
   )
 }
 
-function PositionGroup({
-  title, positions: posOptions, selected, onToggle, color
-}: {
-  title: string
-  positions: Position[]
+function PosButton({ pos, selected, onToggle, color }: {
+  pos: Position
   selected: Position[]
   onToggle: (p: Position) => void
   color: string
 }) {
+  const isSelected = selected.includes(pos)
   return (
-    <div>
-      <p className="text-xs font-bold mb-2" style={{ color }}>{title}</p>
-      <div className="grid grid-cols-2 gap-2">
-        {posOptions.map(pos => {
-          const isSelected = selected.includes(pos)
-          return (
-            <motion.button
-              key={pos}
-              type="button"
-              onClick={() => onToggle(pos)}
-              className="py-2 px-3 rounded-xl text-sm font-semibold transition-all text-left"
-              style={{
-                background: isSelected ? `${color}20` : 'rgba(255,255,255,0.06)',
-                border: `2px solid ${isSelected ? color : 'rgba(255,255,255,0.15)'}`,
-                color: isSelected ? color : 'rgba(255,255,255,0.7)',
-              }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {POSITION_LABELS[pos]}
-            </motion.button>
-          )
-        })}
-      </div>
-    </div>
+    <motion.button
+      type="button"
+      onClick={() => onToggle(pos)}
+      className="py-2 px-3 rounded-xl text-sm font-semibold transition-all text-left"
+      style={{
+        background: isSelected ? `${color}20` : 'rgba(255,255,255,0.06)',
+        border: `2px solid ${isSelected ? color : 'rgba(255,255,255,0.15)'}`,
+        color: isSelected ? color : 'rgba(255,255,255,0.7)',
+      }}
+      whileTap={{ scale: 0.95 }}
+    >
+      {POSITION_LABELS[pos]}
+    </motion.button>
   )
 }
